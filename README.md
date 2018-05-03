@@ -1,18 +1,15 @@
-Yajson
-======
+# Yajson [![Build Status](https://travis-ci.org/emilianobovetti/elm-yajson.svg?branch=master)](https://travis-ci.org/emilianobovetti/elm-yajson)
 
 I tried to port some of the [Yojson](https://github.com/mjambon/yojson) functionalities - in particular the [Yojson.Basic.Util](https://mjambon.github.io/mjambon2016/yojson-doc/Yojson.Basic.Util.html) module - in Elm.
 
 This library provides dynamic json access and manipulation without the need to write [decoders](http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Json-Decode#Decoder).
 
-Why
----
+## Why
 
 Elm has a great json library and ecosystem, but in certain situations, in an elm-repl session for example, I'd like to have a more flexible interface.
 This library, anyway, was written to learn and explore Elm and the use case is more scholastic than practical. It's not meant to replace any of the standard library.
 
-Examples
---------
+## Examples
 
 Say we have a json like the following:
 
