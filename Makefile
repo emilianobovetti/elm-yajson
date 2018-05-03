@@ -8,6 +8,7 @@ examples_dir := $(base_dir)/examples
 # node_modules executables
 elm_make := $(node_bin)/elm-make
 elm_test := $(node_bin)/elm-test
+elm_package := $(node_bin)/elm-package
 elm_analyse := $(node_bin)/elm-analyse
 
 define stripname
@@ -35,7 +36,7 @@ test : yarn-check
 
 .PHONY: analyse
 analyse : yarn-check
-	@$(elm_make) --yes
+	@$(elm_package) install --yes
 	@$(elm_analyse) --elm-format-path $(node_dir)/elm-format/bin/elm-format
 
 %.html :
@@ -49,4 +50,4 @@ examples : yarn-check
 
 .PHONY: clean
 clean :
-	@rm -rf elm-stuff $(node_dir) $(build_dir) $(base_dir)/yarn.lock
+	@rm -rf elm-stuff $(node_dir) $(build_dir)
