@@ -1,10 +1,4 @@
 {
-    "name": "elm-yajson",
-    "version": "1.0.0",
-    "author": "emilianobovetti",
-    "description": "Yet another JSON library inspired by Yojson",
-    "repository": "https://github.com/emilianobovetti/elm-yajson.git",
-    "license": "BSD3",
     "devDependencies": {
         "elm": "^0.18.0",
         "elm-analyse": "^0.14.2",

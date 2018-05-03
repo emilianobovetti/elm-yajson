@@ -1,9 +1,11 @@
-module ExtractTitles exposing (main)
+module ObjectToList exposing (main)
 
 import Html.Attributes exposing (rows, cols)
 import Html.Events exposing (onInput)
 import Html exposing (Html)
 import Yajson.Stringify
+import Yajson.Object
+import Yajson.Array
 import Yajson
 
 
@@ -18,30 +20,25 @@ type alias Model =
 exampleJson : Yajson.Json
 exampleJson =
     """
-    { "id": "398eb027"
-    , "name": "John Doe"
-    , "pages":
-        [
-            { "id": 1
-            , "title": "The Art of Flipping Coins"
-            , "url": "http://example.com/398eb027/1"
+    [
+        { "LBYCHxldU_Fdj0gGMwG":
+            { "title": "Reservoir Dogs"
+            , "year": 1992
             }
-        ,
-            { "id": 2
-            , "deleted": true
+        }
+    ,
+        { "LBYFmCb7NEheQPcjYaE":
+            { "title": "Pulp Fiction"
+            , "year": 1994
             }
-        ,
-            { "id": 3
-            , "title": "Artichoke Salad"
-            , "url": "http://example.com/398eb027/3"
+        }
+    ,
+        { "LBYFmXWnEFeqmlYkFa":
+            { "title": "From Dusk Till Dawn"
+            , "year": 1996
             }
-        ,
-            { "id": 4
-            , "title": "Flying Bananas"
-            , "url": "http://example.com/398eb027/4"
-            }
-        ]
-    }
+        }
+    ]
     """
         |> Yajson.fromString
         |> Result.withDefault Yajson.Null
@@ -64,26 +61,33 @@ update msg model =
                 ! []
 
 
-viewTitles : Yajson.Json -> String
-viewTitles json =
-    [ json ]
-        |> Yajson.filterMember "pages"
-        |> Yajson.flatten
-        |> Yajson.filterMember "title"
-        |> Yajson.filterString
-        |> toString
+movieToString : Yajson.Json -> String
+movieToString json =
+    json
+        |> Yajson.Object.map (\k v -> k ++ ": " ++ Yajson.Stringify.compact v)
+        |> List.foldr (\v acc -> v ++ ", " ++ acc) ""
+        |> String.dropRight 2
+
+
+viewMovies : Yajson.Json -> String
+viewMovies json =
+    json
+        |> Yajson.Array.map Yajson.Object.values
+        |> List.filterMap List.head
+        |> List.map movieToString
+        |> List.foldr (\v acc -> v ++ "\n" ++ acc) ""
 
 
 view : Model -> Html Msg
 view { json } =
     Html.div []
-        [ Html.h1 [] [ Html.text "Extract titles" ]
+        [ Html.h1 [] [ Html.text "Movie list" ]
         , Html.form []
             [ Html.textarea [ onInput NewInput, rows 24, cols 110 ]
                 [ Html.text (Yajson.Stringify.pretty json) ]
             ]
-        , Html.h2 [] [ Html.text "titles:" ]
-        , Html.pre [] [ Html.text (viewTitles json) ]
+        , Html.h2 [] [ Html.text "movies:" ]
+        , Html.pre [] [ Html.text (viewMovies json) ]
         ]
 
 
