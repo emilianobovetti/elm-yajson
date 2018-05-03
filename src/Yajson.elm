@@ -80,7 +80,7 @@ import Json.Encode as Encode
 `String`s and `Json.Encode.Value`s can both be converted in
 this data structure or can be used to represent a JSON in Elm.
 
-Note in this example I'm using the infix [=>](Yajson.Infix) operator
+Note in this example I'm using the infix [=>](Yajson-Infix) operator
 instead of standard tuple `("name", String "Fred")`.
 
     person : Json
