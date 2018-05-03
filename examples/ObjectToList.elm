@@ -65,8 +65,7 @@ movieToString : Yajson.Json -> String
 movieToString json =
     json
         |> Yajson.Object.map (\k v -> k ++ ": " ++ Yajson.Stringify.compact v)
-        |> List.foldr (\v acc -> v ++ ", " ++ acc) ""
-        |> String.dropRight 2
+        |> String.join ", "
 
 
 viewMovies : Yajson.Json -> String
@@ -75,7 +74,7 @@ viewMovies json =
         |> Yajson.Array.map Yajson.Object.values
         |> List.filterMap List.head
         |> List.map movieToString
-        |> List.foldr (\v acc -> v ++ "\n" ++ acc) ""
+        |> String.join "\n"
 
 
 view : Model -> Html Msg
