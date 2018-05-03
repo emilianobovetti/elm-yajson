@@ -60,7 +60,7 @@ rawJson =
     """
 ```
 
-if we want to a list of powers, with standard library the code may look like this
+if we want a list of powers, with standard library the code may look like this
 
 ```elm
 powersDecoder : Json.Decode.Decoder (List (List String))
