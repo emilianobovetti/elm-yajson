@@ -6,9 +6,8 @@ node_bin := $(node_dir)/.bin
 build_dir := $(base_dir)/build
 examples_dir := $(base_dir)/examples
 # node_modules executables
-elm_make := $(node_bin)/elm-make
+elm_bin := $(base_dir)/elm
 elm_test := $(node_bin)/elm-test
-elm_package := $(node_bin)/elm-package
 elm_analyse := $(node_bin)/elm-analyse
 
 define stripname
@@ -26,9 +25,9 @@ ifeq ("$(wildcard $(node_bin))", "")
 endif
 
 .PHONY: docs
-docs : yarn-check
+docs :
 	@mkdir -p $(build_dir)
-	@$(elm_make) --docs=$(build_dir)/documentation.json --yes
+	@$(elm_bin) make --docs=$(build_dir)/documentation.json
 
 .PHONY: test
 test : yarn-check
@@ -40,10 +39,10 @@ analyse : yarn-check
 	@$(elm_analyse) --elm-format-path $(node_dir)/elm-format/bin/elm-format
 
 %.html :
-	@cd $(examples_dir) && $(elm_make) $(call stripname,$@).elm --output=$@ --warn --yes
+	@cd $(examples_dir) && $(elm_bin) make $(call stripname,$@).elm --output=$@
 
 .PHONY: examples
-examples : yarn-check
+examples :
 	@mkdir -p $(build_dir)
 	@rm -f $(build_dir)/*.html
 	@make $(addsuffix '.html',$(addprefix $(build_dir)/,$(examples)))

@@ -22,7 +22,7 @@ module Yajson.Array
 
 -}
 
-import Yajson exposing (Json(Array))
+import Yajson exposing (Json(..))
 
 
 {-| Maps json arrays. Returns an empty list if
