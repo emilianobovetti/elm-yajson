@@ -1,7 +1,8 @@
 module YajsonTest exposing (..)
 
 import Test exposing (Test, describe, test)
-import Yajson exposing (Json(..))
+import Yajson exposing (Json(Object, Array, String, Number, Bool, Null))
+import Yajson.Infix exposing ((=>))
 import Yajson.Stringify
 import Yajson.Object
 import Yajson.Array
@@ -38,24 +39,24 @@ jsonPrettyString =
 jsonValue : Encode.Value
 jsonValue =
     Encode.object
-        [ ( "str", Encode.string "val" )
-        , ( "num", Encode.float 0 )
-        , ( "bool", Encode.bool False )
-        , ( "null", Encode.null )
-        , ( "obj", Encode.object [ ( "k", Encode.string "v" ) ] )
-        , ( "lst", Encode.list [ Encode.int 0, Encode.int 1 ] )
+        [ "str" => Encode.string "val"
+        , "num" => Encode.float 0
+        , "bool" => Encode.bool False
+        , "null" => Encode.null
+        , "obj" => Encode.object [ "k" => Encode.string "v" ]
+        , "lst" => Encode.list [ Encode.int 0, Encode.int 1 ]
         ]
 
 
 yajsonValue : Json
 yajsonValue =
     Object
-        [ ( "str", String "val" )
-        , ( "num", Number 0 )
-        , ( "bool", Bool False )
-        , ( "null", Null )
-        , ( "obj", Object [ ( "k", String "v" ) ] )
-        , ( "lst", Array [ Number 0, Number 1 ] )
+        [ "str" => String "val"
+        , "num" => Number 0
+        , "bool" => Bool False
+        , "null" => Null
+        , "obj" => Object [ "k" => String "v" ]
+        , "lst" => Array [ Number 0, Number 1 ]
         ]
 
 
@@ -111,7 +112,7 @@ member =
             \() ->
                 Expect.equal
                     (Just <| String "value")
-                    (Yajson.member "key" <| Yajson.Object.ofString [ ( "key", "value" ) ])
+                    (Yajson.member "key" <| Yajson.Object.ofString [ "key" => "value" ])
         , test "should return Nothing if key doesn't exist" <|
             \() ->
                 Expect.equal
@@ -134,20 +135,20 @@ at =
                     (Just <| String "value")
                     (Yajson.at [ "1", "2" ] <|
                         Object
-                            [ ( "1", Yajson.Object.ofString [ ( "2", "value" ) ] ) ]
+                            [ "1" => Yajson.Object.ofString [ "2" => "value" ] ]
                     )
         , test "should behave as 'member' if key list contains one key" <|
             \() ->
                 let
                     obj =
-                        Yajson.Object.ofInt [ ( "1", 1 ) ]
+                        Yajson.Object.ofInt [ "1" => 1 ]
                 in
                     Expect.equal
                         (Yajson.member "1" obj)
                         (Yajson.at [ "1" ] obj)
         , test "should return Nothing if key list is empty" <|
             \() ->
-                Expect.equal Nothing (Yajson.at [] <| Yajson.Object.ofInt [ ( "1", 1 ) ])
+                Expect.equal Nothing (Yajson.at [] <| Yajson.Object.ofInt [ "1" => 1 ])
         ]
 
 
