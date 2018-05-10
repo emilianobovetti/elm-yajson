@@ -22,7 +22,7 @@ module Yajson.Array
 
 -}
 
-import Yajson exposing (Json(Array))
+import Yajson exposing (Json)
 
 
 {-| Maps json arrays. Returns an empty list if
@@ -64,7 +64,7 @@ If the json value is not an array returns an empty list.
 filterMap : (Json -> Maybe a) -> Json -> List a
 filterMap fn json =
     case json of
-        Array lst ->
+        Yajson.Array lst ->
             List.filterMap fn lst
 
         _ ->
@@ -79,7 +79,7 @@ filterMap fn json =
 -}
 ofString : List String -> Json
 ofString lst =
-    Array (List.map Yajson.String lst)
+    Yajson.Array (List.map Yajson.String lst)
 
 
 {-| Wraps a list of floats in a json value.
@@ -90,7 +90,7 @@ ofString lst =
 -}
 ofFloat : List Float -> Json
 ofFloat lst =
-    Array (List.map Yajson.Number lst)
+    Yajson.Array (List.map Yajson.Number lst)
 
 
 {-| Wraps a list of ints in a json value.
@@ -101,7 +101,7 @@ ofFloat lst =
 -}
 ofInt : List Int -> Json
 ofInt lst =
-    Array (List.map (toFloat >> Yajson.Number) lst)
+    Yajson.Array (List.map (toFloat >> Yajson.Number) lst)
 
 
 {-| Wraps a list of booleans in a json value.
@@ -112,4 +112,4 @@ ofInt lst =
 -}
 ofBool : List Bool -> Json
 ofBool lst =
-    Array (List.map Yajson.Bool lst)
+    Yajson.Array (List.map Yajson.Bool lst)

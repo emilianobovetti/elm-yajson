@@ -1,13 +1,6 @@
 module Yajson
     exposing
-        ( Json
-            ( Object
-            , Array
-            , String
-            , Number
-            , Bool
-            , Null
-            )
+        ( Json(..)
         , decoder
         , fromValue
         , fromString
@@ -80,16 +73,14 @@ import Json.Encode as Encode
 `String`s and `Json.Encode.Value`s can both be converted in
 this data structure or can be used to represent a JSON in Elm.
 
-Note in this example I'm using the infix [=>](Yajson-Infix) operator
-instead of standard tuple `("name", String "Fred")`.
-
     person : Json
     person =
         Object
-            [ "name" => String "Fred"
-            , "age" => Number 20
-            , "favorite_colors"
-                => Array [ String "red", String "green" ]
+            [ ( "name", String "Fred" )
+            , ( "age", Number 20 )
+            , ( "favorite_colors"
+              , Array [ String "red", String "green" ]
+              )
             ]
 
 -}
@@ -134,7 +125,7 @@ decoder =
     fromValue jsonValue
 
 -}
-fromValue : Encode.Value -> Result String Json
+fromValue : Encode.Value -> Result Decode.Error Json
 fromValue val =
     Decode.decodeValue decoder val
 
@@ -144,7 +135,7 @@ fromValue val =
     fromString """{ "hello": "world" }"""
 
 -}
-fromString : String -> Result String Json
+fromString : String -> Result Decode.Error Json
 fromString raw =
     Decode.decodeString decoder raw
 
@@ -163,9 +154,7 @@ encode json =
                 |> Encode.object
 
         Array lst ->
-            lst
-                |> List.map encode
-                |> Encode.list
+            Encode.list encode lst
 
         String str ->
             Encode.string str
@@ -186,7 +175,7 @@ isn't present in object or the json value isn't an object.
 
     member "anything" Null == Nothing
 
-    member "a_key" (Object [ "a_key" => String "a_value" ])
+    member "a_key" (Object [ ( "a_key", String "a_value" ) ])
         == Just (String "a_value")
 
 -}
@@ -381,9 +370,9 @@ filterIndex idx lst =
 
     min : Maybe Int
     min =
-        [ Object [ "key_3" => Number 10 ]
-        , Object [ "key_1" => Number -1 ]
-        , Object [ "key_2" => Number 11 ]
+        [ Object [ ( "key_3", Number 10 ) ]
+        , Object [ ( "key_1", Number -1 ) ]
+        , Object [ ( "key_2", Number 11 ) ]
         ]
             |> filterAssoc
             |> List.concatMap (List.map Tuple.second)
@@ -468,8 +457,8 @@ returns `Nothing`.
 
     toMaybeAssoc Null == Nothing
 
-    toMaybeAssoc (Object [ "key" => String "value" ])
-        == Just [ "key" => String "value" ]
+    toMaybeAssoc (Object [ ( "key", String "value" ) ])
+        == Just [ ( "key", String "value" ) ]
 
 -}
 toMaybeAssoc : Json -> Maybe (List ( String, Json ))
@@ -487,8 +476,8 @@ If the json value isn't an object returns an empty list.
 
     toAssoc Null == []
 
-    toAssoc (Object [ "key" => String "value" ])
-        == [ "key" => String "value" ]
+    toAssoc (Object [ ( "key", String "value" ) ])
+        == [ ( "key", String "value" ) ]
 
 -}
 toAssoc : Json -> List ( String, Json )
@@ -579,9 +568,8 @@ toInt : Json -> Maybe Int
 toInt json =
     json
         |> toFloat
-        |> Maybe.map Basics.toString
-        |> Maybe.map String.toInt
-        |> Maybe.andThen Result.toMaybe
+        |> Maybe.map String.fromFloat
+        |> Maybe.andThen String.toInt
 
 
 {-| Extracts a boolean from a json, returns `Nothing` if

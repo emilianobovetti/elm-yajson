@@ -7,7 +7,7 @@ May be useful for debugging purpose.
 
 -}
 
-import Yajson exposing (Json(Object, Array, String, Number, Bool, Null))
+import Yajson exposing (Json(..))
 
 
 type Indent
@@ -24,20 +24,20 @@ unescape chr acc =
         '\\' ->
             "\\\\" ++ acc
 
-        '\x08' ->
-            "\\b" ++ acc
-
-        '\x0C' ->
-            "\\f" ++ acc
-
         '\n' ->
             "\\n" ++ acc
 
-        '\x0D' ->
-            "\\r" ++ acc
-
         '\t' ->
             "\\t" ++ acc
+
+        '\u{0008}' ->
+            "\\b" ++ acc
+
+        '\u{000C}' ->
+            "\\f" ++ acc
+
+        '\u{000D}' ->
+            "\\r" ++ acc
 
         _ ->
             String.fromChar chr ++ acc
@@ -169,7 +169,7 @@ toString ind json =
             stringToSource str
 
         Number num ->
-            Basics.toString num
+            String.fromFloat num
 
         Bool False ->
             "false"
