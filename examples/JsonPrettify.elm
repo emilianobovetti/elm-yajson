@@ -3,7 +3,7 @@ module JsonPrettify exposing (main)
 import Html.Attributes exposing (rows, cols)
 import Html.Events exposing (onInput)
 import Html exposing (Html)
-import Result.Extra
+import Json.Decode as Decode
 import Yajson.Stringify
 import Yajson
 
@@ -37,19 +37,24 @@ rawJson =
 
 init : ( Model, Cmd Msg )
 init =
-    { json = Yajson.fromString rawJson } ! []
+    ( { json = Yajson.fromString rawJson }, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         NewInput str ->
-            { model | json = Yajson.fromString str } ! []
+            ( { model | json = Yajson.fromString str }, Cmd.none )
 
 
 viewJson : Result String Yajson.Json -> String
 viewJson res =
-    Result.Extra.unpack identity Yajson.Stringify.pretty res
+    case res of
+        Ok json ->
+            Yajson.Stringify.pretty json
+
+        Err e ->
+            Decode.errorToString e
 
 
 view : Model -> Html Msg

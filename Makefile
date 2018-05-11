@@ -6,7 +6,7 @@ node_bin := $(node_dir)/.bin
 build_dir := $(base_dir)/build
 examples_dir := $(base_dir)/examples
 # node_modules executables
-elm_bin := $(base_dir)/.elm
+elm_bin := $(build_dir)/elm
 elm_test := $(node_bin)/elm-test
 elm_analyse := $(node_bin)/elm-analyse
 
