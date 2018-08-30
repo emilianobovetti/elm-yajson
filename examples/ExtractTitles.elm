@@ -48,25 +48,21 @@ exampleJson =
         |> Result.withDefault Yajson.Null
 
 
-init : ( Model, Cmd Msg )
+init : Model
 init =
-    ( { json = exampleJson }, Cmd.none )
+    { json = exampleJson }
 
 
-update : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-update msg ( model, cmd ) =
+update : Msg -> Model -> Model
+update msg model =
     case msg of
         NewInput str ->
             let
                 newJson : Yajson.Json
                 newJson =
                     Yajson.fromString str |> Result.withDefault Yajson.Null
-
-                newModel : Model
-                newModel =
-                    { model | json = newJson }
             in
-            ( newModel, Cmd.none )
+            { model | json = newJson }
 
 
 stringifyList : List String -> String -> String
@@ -97,8 +93,8 @@ viewTitles json =
         |> showList
 
 
-view : ( Model, Cmd Msg ) -> Html Msg
-view ( { json }, cmd ) =
+view : Model -> Html Msg
+view { json } =
     Html.div []
         [ Html.h1 [] [ Html.text "Extract titles" ]
         , Html.form []
@@ -110,7 +106,7 @@ view ( { json }, cmd ) =
         ]
 
 
-main : Program () ( Model, Cmd Msg ) Msg
+main : Program () Model Msg
 main =
     Browser.sandbox
         { init = init

@@ -36,16 +36,16 @@ rawJson =
     """
 
 
-init : ( Model, Cmd Msg )
+init : Model
 init =
-    ( { json = Yajson.fromString rawJson }, Cmd.none )
+    { json = Yajson.fromString rawJson }
 
 
-update : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-update msg ( model, cmd ) =
+update : Msg -> Model -> Model
+update msg model =
     case msg of
         NewInput str ->
-            ( { model | json = Yajson.fromString str }, Cmd.none )
+            { model | json = Yajson.fromString str }
 
 
 viewJson : Result Decode.Error Yajson.Json -> String
@@ -58,8 +58,8 @@ viewJson res =
             Decode.errorToString err
 
 
-view : ( Model, Cmd Msg ) -> Html Msg
-view ( { json }, cmd ) =
+view : Model -> Html Msg
+view { json } =
     Html.div []
         [ Html.h1 [] [ Html.text "Json prettify" ]
         , Html.form []
@@ -75,7 +75,7 @@ subscriptions _ =
     Sub.none
 
 
-main : Program () ( Model, Cmd Msg ) Msg
+main : Program () Model Msg
 main =
     Browser.sandbox
         { init = init
