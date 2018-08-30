@@ -36,7 +36,7 @@ docs : yarn-check
 
 .PHONY: test
 test : yarn-check
-	@$(elm_test)
+	@$(elm_test) --compiler $(elm_bin)
 
 .PHONY: analyse
 analyse : yarn-check
