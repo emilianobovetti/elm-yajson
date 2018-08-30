@@ -186,9 +186,9 @@ toString ind json =
     str : String
     str =
         compact <| Array
-            [ Object [ "name" => String "Hugo" ]
-            , Object [ "name" => String "Manuel" ]
-            , Object [ "name" => String "Eva" ]
+            [ Object [ ( "name", String "Hugo" ) ]
+            , Object [ ( "name", String "Manuel" ) ]
+            , Object [ ( "name", String "Eva" ) ]
             ]
 
     str == """[{"name":"Hugo"},{"name":"Manuel"},{"name":"Eva"}]"""

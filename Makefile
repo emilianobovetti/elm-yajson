@@ -6,7 +6,7 @@ node_bin := $(node_dir)/.bin
 build_dir := $(base_dir)/build
 examples_dir := $(base_dir)/examples
 # node_modules executables
-elm_bin := $(build_dir)/elm
+elm_bin := $(node_bin)/elm
 elm_test := $(node_bin)/elm-test
 elm_analyse := $(node_bin)/elm-analyse
 
@@ -16,7 +16,12 @@ endef
 
 examples := $(call stripname,$(wildcard $(examples_dir)/*.elm))
 
-all: docs test analyse examples
+# TODO add analyse
+all: yarn docs test examples
+
+.PHONY: yarn
+yarn :
+	@yarn
 
 .PHONY: yarn-check
 yarn-check :
@@ -31,7 +36,7 @@ docs : yarn-check
 
 .PHONY: test
 test : yarn-check
-	@$(elm_test) --compiler $(node_dir)/elm/binwrappers/elm-make
+	@$(elm_test)
 
 .PHONY: analyse
 analyse : yarn-check

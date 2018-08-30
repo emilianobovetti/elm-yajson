@@ -1,10 +1,11 @@
 module ExtractTitles exposing (main)
 
-import Html.Attributes exposing (rows, cols)
-import Html.Events exposing (onInput)
+import Browser
 import Html exposing (Html)
-import Yajson.Stringify
+import Html.Attributes exposing (cols, rows)
+import Html.Events exposing (onInput)
 import Yajson
+import Yajson.Stringify
 
 
 type Msg
@@ -49,19 +50,41 @@ exampleJson =
 
 init : ( Model, Cmd Msg )
 init =
-    { json = exampleJson } ! []
+    ( { json = exampleJson }, Cmd.none )
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+update msg ( model, cmd ) =
     case msg of
         NewInput str ->
-            { model
-                | json =
-                    Yajson.fromString str
-                        |> Result.withDefault Yajson.Null
-            }
-                ! []
+            let
+                newJson : Yajson.Json
+                newJson =
+                    Yajson.fromString str |> Result.withDefault Yajson.Null
+
+                newModel : Model
+                newModel =
+                    { model | json = newJson }
+            in
+            ( newModel, Cmd.none )
+
+
+stringifyList : List String -> String -> String
+stringifyList lst acc =
+    case lst of
+        [] ->
+            acc
+
+        [ last ] ->
+            acc ++ last
+
+        hd :: tl ->
+            stringifyList tl (acc ++ hd ++ ", ")
+
+
+showList : List String -> String
+showList lst =
+    "[ " ++ stringifyList lst "" ++ " ]"
 
 
 viewTitles : Yajson.Json -> String
@@ -71,11 +94,11 @@ viewTitles json =
         |> Yajson.flatten
         |> Yajson.filterMember "title"
         |> Yajson.filterString
-        |> toString
+        |> showList
 
 
-view : Model -> Html Msg
-view { json } =
+view : ( Model, Cmd Msg ) -> Html Msg
+view ( { json }, cmd ) =
     Html.div []
         [ Html.h1 [] [ Html.text "Extract titles" ]
         , Html.form []
@@ -87,16 +110,10 @@ view { json } =
         ]
 
 
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
-
-
-main : Program Never Model Msg
+main : Program () ( Model, Cmd Msg ) Msg
 main =
-    Html.program
+    Browser.sandbox
         { init = init
         , view = view
         , update = update
-        , subscriptions = subscriptions
         }

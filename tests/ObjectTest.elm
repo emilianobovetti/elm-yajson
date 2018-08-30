@@ -1,10 +1,9 @@
-module ObjectTest exposing (..)
+module ObjectTest exposing (suite)
 
-import Test exposing (Test, describe, test)
-import Yajson exposing (Json(Object, String, Number, Bool, Null))
-import Yajson.Infix exposing ((=>))
-import Yajson.Object as Obj
 import Expect
+import Test exposing (Test, describe, test)
+import Yajson
+import Yajson.Object
 
 
 suite : Test
@@ -14,14 +13,14 @@ suite =
             [ test "should create an object with string values" <|
                 \() ->
                     Expect.equal
-                        (Object
-                            [ "1" => String "1"
-                            , "2" => String "2"
+                        (Yajson.Object
+                            [ ( "1", Yajson.String "1" )
+                            , ( "2", Yajson.String "2" )
                             ]
                         )
-                        (Obj.ofString
-                            [ "1" => "1"
-                            , "2" => "2"
+                        (Yajson.Object.ofString
+                            [ ( "1", "1" )
+                            , ( "2", "2" )
                             ]
                         )
             ]
@@ -29,14 +28,14 @@ suite =
             [ test "should create an object with float values" <|
                 \() ->
                     Expect.equal
-                        (Object
-                            [ "1" => Number 1
-                            , "2" => Number 2
+                        (Yajson.Object
+                            [ ( "1", Yajson.Number 1 )
+                            , ( "2", Yajson.Number 2 )
                             ]
                         )
-                        (Obj.ofFloat
-                            [ "1" => 1
-                            , "2" => 2
+                        (Yajson.Object.ofFloat
+                            [ ( "1", 1 )
+                            , ( "2", 2 )
                             ]
                         )
             ]
@@ -44,14 +43,14 @@ suite =
             [ test "should create an object with int values" <|
                 \() ->
                     Expect.equal
-                        (Object
-                            [ "1" => Number 1
-                            , "2" => Number 2
+                        (Yajson.Object
+                            [ ( "1", Yajson.Number 1 )
+                            , ( "2", Yajson.Number 2 )
                             ]
                         )
-                        (Obj.ofInt
-                            [ "1" => 1
-                            , "2" => 2
+                        (Yajson.Object.ofInt
+                            [ ( "1", 1 )
+                            , ( "2", 2 )
                             ]
                         )
             ]
@@ -59,14 +58,14 @@ suite =
             [ test "should create an object with int boolean" <|
                 \() ->
                     Expect.equal
-                        (Object
-                            [ "1" => Bool True
-                            , "2" => Bool False
+                        (Yajson.Object
+                            [ ( "1", Yajson.Bool True )
+                            , ( "2", Yajson.Bool False )
                             ]
                         )
-                        (Obj.ofBool
-                            [ "1" => True
-                            , "2" => False
+                        (Yajson.Object.ofBool
+                            [ ( "1", True )
+                            , ( "2", False )
                             ]
                         )
             ]
@@ -75,11 +74,11 @@ suite =
                 \() ->
                     Expect.equal
                         [ "1", "2", "3" ]
-                        (Obj.keys <|
-                            Obj.ofInt
-                                [ "1" => 1
-                                , "2" => 2
-                                , "3" => 3
+                        (Yajson.Object.keys <|
+                            Yajson.Object.ofInt
+                                [ ( "1", 1 )
+                                , ( "2", 2 )
+                                , ( "3", 3 )
                                 ]
                         )
             ]
@@ -87,12 +86,12 @@ suite =
             [ test "should return object values" <|
                 \() ->
                     Expect.equal
-                        [ Number 1, Number 2, Number 3 ]
-                        (Obj.values <|
-                            Obj.ofInt
-                                [ "1" => 1
-                                , "2" => 2
-                                , "3" => 3
+                        [ Yajson.Number 1, Yajson.Number 2, Yajson.Number 3 ]
+                        (Yajson.Object.values <|
+                            Yajson.Object.ofInt
+                                [ ( "1", 1 )
+                                , ( "2", 2 )
+                                , ( "3", 3 )
                                 ]
                         )
             ]
@@ -102,15 +101,17 @@ suite =
                     let
                         incKeyVal key val =
                             case ( String.toInt key, val ) of
-                                ( Ok keyNum, Number valNum ) ->
-                                    ( toString (keyNum + 1), Number (valNum + 1) )
+                                ( Just keyNum, Yajson.Number valNum ) ->
+                                    ( String.fromInt (keyNum + 1), Yajson.Number (valNum + 1) )
 
                                 _ ->
                                     ( key, val )
                     in
-                        Expect.equal
-                            ([ "1" => Number 1, "2" => Number 2 ])
-                            (Obj.map incKeyVal <| Obj.ofInt [ "0" => 0, "1" => 1 ])
+                    Expect.equal
+                        [ ( "1", Yajson.Number 1 ), ( "2", Yajson.Number 2 ) ]
+                        (Yajson.Object.map incKeyVal <|
+                            Yajson.Object.ofInt [ ( "0", 0 ), ( "1", 1 ) ]
+                        )
             ]
         , describe "mapKeys"
             [ test "should map json object keys" <|
@@ -118,15 +119,17 @@ suite =
                     let
                         incKey key =
                             case String.toInt key of
-                                Ok keyNum ->
-                                    toString (keyNum + 1)
+                                Just keyNum ->
+                                    String.fromInt (keyNum + 1)
 
                                 _ ->
                                     key
                     in
-                        Expect.equal
-                            [ "1" => Number 1, "2" => Number 2 ]
-                            (Obj.mapKeys incKey <| Obj.ofInt [ "0" => 1, "1" => 2 ])
+                    Expect.equal
+                        [ ( "1", Yajson.Number 1 ), ( "2", Yajson.Number 2 ) ]
+                        (Yajson.Object.mapKeys incKey <|
+                            Yajson.Object.ofInt [ ( "0", 1 ), ( "1", 2 ) ]
+                        )
             ]
         , describe "mapValues"
             [ test "should map json object values" <|
@@ -134,15 +137,17 @@ suite =
                     let
                         incVal val =
                             case val of
-                                Number num ->
-                                    Number (num + 1)
+                                Yajson.Number num ->
+                                    Yajson.Number (num + 1)
 
                                 _ ->
                                     val
                     in
-                        Expect.equal
-                            [ "1" => Number 1, "2" => Number 2 ]
-                            (Obj.mapValues incVal <| Obj.ofInt [ "1" => 0, "2" => 1 ])
+                    Expect.equal
+                        [ ( "1", Yajson.Number 1 ), ( "2", Yajson.Number 2 ) ]
+                        (Yajson.Object.mapValues incVal <|
+                            Yajson.Object.ofInt [ ( "1", 0 ), ( "2", 1 ) ]
+                        )
             ]
         , describe "filterMap"
             [ test "should work on json objects" <|
@@ -150,31 +155,32 @@ suite =
                     let
                         incIfNum key val =
                             case val of
-                                Number num ->
-                                    Just ( "mapped " ++ key, Number (num + 1) )
+                                Yajson.Number num ->
+                                    Just ( "mapped " ++ key, Yajson.Number (num + 1) )
 
                                 _ ->
                                     Nothing
                     in
-                        Expect.equal
-                            [ "mapped 1" => Number 1 ]
-                            (Obj.filterMap incIfNum <| Object [ "1" => Number 0, "2" => String "s" ])
+                    Expect.equal
+                        [ ( "mapped 1", Yajson.Number 1 ) ]
+                        (Yajson.Object.filterMap incIfNum <|
+                            Yajson.Object [ ( "1", Yajson.Number 0 ), ( "2", Yajson.String "s" ) ]
+                        )
             ]
         , describe "filterMapKeys"
             [ test "should work on object keys" <|
                 \() ->
                     let
                         mapKey key =
-                            case String.toInt key of
-                                Ok _ ->
-                                    Just ("int:" ++ key)
-
-                                Err _ ->
-                                    Nothing
+                            key
+                                |> String.toInt
+                                |> Maybe.map (\_ -> "int:" ++ key)
                     in
-                        Expect.equal
-                            [ "int:1" => Number 1 ]
-                            (Obj.filterMapKeys mapKey <| Obj.ofInt [ "a" => 0, "1" => 1 ])
+                    Expect.equal
+                        [ ( "int:1", Yajson.Number 1 ) ]
+                        (Yajson.Object.filterMapKeys mapKey <|
+                            Yajson.Object.ofInt [ ( "a", 0 ), ( "1", 1 ) ]
+                        )
             ]
         , describe "filterMapValues" <|
             [ test "should work on object values" <|
@@ -182,14 +188,16 @@ suite =
                     let
                         mapValue val =
                             case val of
-                                String s ->
+                                Yajson.String s ->
                                     Just ("str:" ++ s)
 
                                 _ ->
                                     Nothing
                     in
-                        Expect.equal
-                            [ "1" => "str:value" ]
-                            (Obj.filterMapValues mapValue <| Object [ "0" => Number 0, "1" => String "value" ])
+                    Expect.equal
+                        [ ( "1", "str:value" ) ]
+                        (Yajson.Object.filterMapValues mapValue <|
+                            Yajson.Object [ ( "0", Yajson.Number 0 ), ( "1", Yajson.String "value" ) ]
+                        )
             ]
         ]

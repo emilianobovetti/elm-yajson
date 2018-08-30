@@ -1,11 +1,12 @@
 module JsonPrettify exposing (main)
 
-import Html.Attributes exposing (rows, cols)
-import Html.Events exposing (onInput)
+import Browser
 import Html exposing (Html)
+import Html.Attributes exposing (cols, rows)
+import Html.Events exposing (onInput)
 import Json.Decode as Decode
-import Yajson.Stringify
 import Yajson
+import Yajson.Stringify
 
 
 type Msg
@@ -13,7 +14,7 @@ type Msg
 
 
 type alias Model =
-    { json : Result String Yajson.Json }
+    { json : Result Decode.Error Yajson.Json }
 
 
 rawJson : String
@@ -40,25 +41,25 @@ init =
     ( { json = Yajson.fromString rawJson }, Cmd.none )
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+update msg ( model, cmd ) =
     case msg of
         NewInput str ->
             ( { model | json = Yajson.fromString str }, Cmd.none )
 
 
-viewJson : Result String Yajson.Json -> String
+viewJson : Result Decode.Error Yajson.Json -> String
 viewJson res =
     case res of
         Ok json ->
             Yajson.Stringify.pretty json
 
-        Err e ->
-            Decode.errorToString e
+        Err err ->
+            Decode.errorToString err
 
 
-view : Model -> Html Msg
-view { json } =
+view : ( Model, Cmd Msg ) -> Html Msg
+view ( { json }, cmd ) =
     Html.div []
         [ Html.h1 [] [ Html.text "Json prettify" ]
         , Html.form []
@@ -74,11 +75,10 @@ subscriptions _ =
     Sub.none
 
 
-main : Program Never Model Msg
+main : Program () ( Model, Cmd Msg ) Msg
 main =
-    Html.program
+    Browser.sandbox
         { init = init
         , view = view
         , update = update
-        , subscriptions = subscriptions
         }
