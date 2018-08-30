@@ -1,13 +1,12 @@
 # Yajson [![Build Status](https://travis-ci.org/emilianobovetti/elm-yajson.svg?branch=master)](https://travis-ci.org/emilianobovetti/elm-yajson)
 
-I tried to port some of the [Yojson](https://github.com/mjambon/yojson) functionalities - in particular the [Yojson.Basic.Util](https://mjambon.github.io/mjambon2016/yojson-doc/Yojson.Basic.Util.html) module - in Elm.
+Please note that this library was written for scholastic purpose. For production needs refer to [elm/json](https://package.elm-lang.org/packages/elm/json/latest/).
 
-This library provides dynamic json access and manipulation without the need to write [decoders](http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Json-Decode#Decoder).
+If, like me, you are studying Elm and wondering if it is possible to handle JSON without writing decoders, the answer – of course – is “yes”. I have referred to OCaml [Yojson](https://github.com/mjambon/yojson) library, and in particular I have ported in Elm some parts of [Yojson.Basic.Util](https://mjambon.github.io/mjambon2016/yojson-doc/Yojson.Basic.Util.html) module.
 
-## Why
+In the end (not surprisingly), it turns out that `elm/json` is the best option for the vast majority of contexts.
 
-Elm has a great json library and ecosystem, but in certain situations, in an elm-repl session for example, I'd like to have a more flexible interface.
-This library, anyway, was written to learn and explore Elm and the use case is more scholastic than practical. It's not meant to replace any of the standard library.
+I decided to publish this library as a case study, to show how decoders approach may seem hard at first, but it remains the best option for Elm.
 
 ## Examples
 
