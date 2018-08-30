@@ -3,7 +3,7 @@
     "name": "emilianobovetti/elm-yajson",
     "summary": "Yet another JSON library inspired by Yojson",
     "license": "BSD-3-Clause",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "exposed-modules": [
         "Yajson",
         "Yajson.Array",
